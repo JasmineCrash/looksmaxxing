@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "looksmaxxing",
+	"version": "0.0.1",
+	"name": "Looksmaxxing",
+	"description": "Adds the ability to give mobs \"The Look\", after which they are so enthralled by your charm that they'll follow your commands as if they were units in an RTS game.",
+	"authors": [
+		"JasmineCrash"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "EUPL-1.2",
+	"icon": "assets/looksmaxxing/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.jasminecrash.looksmaxxing.Looksmaxxing"
+		],
+		"client": [
+			"io.github.jasminecrash.looksmaxxing.client.LooksmaxxingClient"
+		],
+		"fabric-datagen": [
+			"io.github.jasminecrash.looksmaxxing.client.LooksmaxxingDataGenerator"
+		]
+	},
+	"mixins": [
+		"looksmaxxing.mixins.json",
+		{
+			"config": "looksmaxxing.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.6",
+		"minecraft": "~26.1.1",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
