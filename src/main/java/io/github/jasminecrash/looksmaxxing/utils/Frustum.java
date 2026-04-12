@@ -31,6 +31,7 @@ public class Frustum {
     public void updateFrustum(Matrix4fc frustumMatrix) {
         this.intersectionChecker.set(frustumMatrix);
         this.rayCaster.set(frustumMatrix);
+        this.projectionMatrix.set(frustumMatrix);
     }
 
     public boolean testIntersection(Vector3fc vec) { return this.intersectionChecker.testPoint(vec); }
