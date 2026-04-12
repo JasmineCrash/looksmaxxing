@@ -1,15 +1,40 @@
 package io.github.jasminecrash.looksmaxxing.utils;
 
-import org.joml.FrustumIntersection;
-import org.joml.Matrix4fc;
-import org.joml.Vector3fc;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TargetingUtils {
-    public static boolean isVectorInFrustum(Vector3fc vec, Matrix4fc frustumMatrix) {
-        FrustumIntersection intersectionChecker = new FrustumIntersection(frustumMatrix);
-        return intersectionChecker.testPoint(vec);
+
+    public static List<Mob> getMobsInCube(Vec3 AABBCenter, double boxWidth, ServerLevel level) {
+        AABB targetingBox = new AABB(
+                new Vec3(AABBCenter.toVector3f()).subtract(boxWidth/2),
+                new Vec3(AABBCenter.toVector3f()).add(boxWidth/2)
+        );
+        return level.getEntitiesOfClass(Mob.class, targetingBox);
     }
-    public static boolean isVectorInFrustum(Vector3fc vec, Frustum frustum) {
-        return frustum.testIntersection(vec);
+    public static List<Player> getPlayersInCube(Vec3 AABBCenter, double boxWidth, ServerLevel level) {
+        AABB targetingBox = new AABB(
+                new Vec3(AABBCenter.toVector3f()).subtract(boxWidth/2),
+                new Vec3(AABBCenter.toVector3f()).add(boxWidth/2)
+        );
+        return level.getEntitiesOfClass(Player.class, targetingBox);
+    }
+    public static List<BlockPos> getBlockPosInCube(Vec3 AABBCenter, double boxWidth) {
+        AABB targetingBox = new AABB(
+                new Vec3(AABBCenter.toVector3f()).subtract(boxWidth/2),
+                new Vec3(AABBCenter.toVector3f()).add(boxWidth/2)
+        );
+        List<BlockPos> blocks = new ArrayList<>();
+        for(BlockPos pos : BlockPos.betweenClosed(targetingBox)) {
+            blocks.add(pos);
+        }
+        return blocks;
     }
 }
