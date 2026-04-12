@@ -17,6 +17,7 @@ public class Looksmaxxing implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModDataAttachments.registerAttachments();
 		LOGGER.info("[" + MOD_ID + "] *winks at u*");
 	}
 }

@@ -24,13 +24,17 @@ public abstract class MathUtils {
         if (frustum == null) { throw new IllegalArgumentException("Cannot generate points for the mesh of a null frustum"); }
         Vector3f[] surface = new Vector3f[24]; //packed positions of the four points on each of the 6 quads
         Vector3f[] corners = frustum.getCorners();
-        int i = 0;
-        surface[i++] = corners[0]; surface[i++] = corners[1]; surface[i++] = corners[3]; surface[i++] = corners[2];  //near clip plane
-        surface[i++] = corners[4]; surface[i++] = corners[5]; surface[i++] = corners[7]; surface[i++] = corners[6];  //far clip plane
-        surface[i++] = corners[0]; surface[i++] = corners[2]; surface[i++] = corners[6]; surface[i++] = corners[4];  //left plane
-        surface[i++] = corners[1]; surface[i++] = corners[3]; surface[i++] = corners[7]; surface[i++] = corners[5];  //right plane
-        surface[i++] = corners[0]; surface[i++] = corners[1]; surface[i++] = corners[5]; surface[i++] = corners[4];  //bottom plane
-        surface[i++] = corners[2]; surface[i++] = corners[3]; surface[i++] = corners[7]; surface[i++] = corners[6];  //top plane (poor little i++...)
+        int[] indices = new int[] {
+                0, 1, 3, 2, //near clip plane
+                4, 5, 7, 6, //far clip plane
+                0, 2, 6, 4, //left plane
+                1, 3, 7, 5, //right plane
+                0, 1, 5, 4, //bottom plane
+                2, 3, 7, 6  //top plane
+        };
+        for (int i = 0; i < surface.length; i++) {
+            surface[i] = corners[indices[i]];
+        }
         return surface;
     }
 
