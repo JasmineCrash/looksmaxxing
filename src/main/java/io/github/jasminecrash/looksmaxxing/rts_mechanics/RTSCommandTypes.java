@@ -32,11 +32,11 @@ public abstract class RTSCommandTypes {
                             followRange.removeModifier(RTSAttributes.RTS_FOLLOW_RANGE_BOOST);
                             followRange.addTransientModifier(new AttributeModifier(
                                     RTSAttributes.RTS_FOLLOW_RANGE_BOOST,
-                                    256.0,                      // how far you want pathfinding to reach
+                                    256.0,
                                     AttributeModifier.Operation.ADD_VALUE
                             ));
                         }
-                        mob.getNavigation().stop();
+                        //mob.getNavigation().stop();
                         mob.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), 1.0);
                     }
             )
