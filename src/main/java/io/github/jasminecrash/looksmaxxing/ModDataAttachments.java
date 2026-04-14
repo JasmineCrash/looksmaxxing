@@ -1,10 +1,12 @@
 package io.github.jasminecrash.looksmaxxing;
 
 import com.mojang.serialization.Codec;
+import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommand;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.resources.Identifier;
 
+import java.util.ArrayDeque;
 import java.util.function.Consumer;
 
 public class ModDataAttachments {
@@ -53,6 +55,15 @@ public class ModDataAttachments {
             stringBuilder -> stringBuilder
                     .initializer(() -> 0.0d)
     ); //note: this attachment should NOT be networked for performance’s sake
+
+    //RTS mechanics
+
+    public static final AttachmentType<ArrayDeque<RTSCommand>> COMMAND_QUEUE = registerAttachment(
+            "enthrall_command_queue",
+            arrayDequeBuilder -> arrayDequeBuilder
+                    .copyOnDeath()
+                    .initializer(ArrayDeque::new)
+    );
 
     public static void registerAttachments() {
 

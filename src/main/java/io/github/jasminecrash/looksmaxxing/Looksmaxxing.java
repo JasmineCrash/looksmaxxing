@@ -1,5 +1,8 @@
 package io.github.jasminecrash.looksmaxxing;
 
+import io.github.jasminecrash.looksmaxxing.networking.ModPacketReceivers;
+import io.github.jasminecrash.looksmaxxing.networking.ModPackets;
+import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommandTypes;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -18,6 +21,10 @@ public class Looksmaxxing implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModDataAttachments.registerAttachments();
+		ModPackets.registerPackets();
+		ModPacketReceivers.registerServerReceivers();
+		RTSCommandTypes.registerRTSCommandTypes();
+		ModCommands.registerCommands();
 		LOGGER.info("[" + MOD_ID + "] *winks at u*");
 	}
 }

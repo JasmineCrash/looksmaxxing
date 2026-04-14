@@ -24,6 +24,8 @@ loom {
 		}
 	}
 
+	accessWidenerPath = file("src/main/resources/looksmaxxing.classtweaker")
+
 }
 
 fabricApi {

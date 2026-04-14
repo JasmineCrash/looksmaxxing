@@ -8,7 +8,6 @@ import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import io.github.jasminecrash.looksmaxxing.ModDataAttachments;
 import io.github.jasminecrash.looksmaxxing.utils.Frustum;
 import io.github.jasminecrash.looksmaxxing.utils.MathUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
@@ -74,7 +73,7 @@ public class FrustumRenderer {
 //                .filter(person -> person.getAttachedOrElse(ModDataAttachments.CASTING_THE_LOOK, false)).toList()) {
 //            extractCone(context, player);
 //        }
-        extractFrustum(context, mc.player);
+        //extractFrustum(context, mc.player);
 
         // Draw (upload + dispatch)
         if (buffer != null) {
@@ -117,8 +116,8 @@ public class FrustumRenderer {
         }
 
         //chop off the near and far clip planes for now by starting a bit ahead
-        for(int i = 0; i < surface.length; i++) {
-            buffer.addVertex(pose, surface[i].x, surface[i].y, surface[i].z).setColor(CR, CG, CB, CA);
+        for (Vector3f vector3f : surface) {
+            buffer.addVertex(pose, vector3f.x, vector3f.y, vector3f.z).setColor(CR, CG, CB, CA);
         }
 
         matrices.popPose();
