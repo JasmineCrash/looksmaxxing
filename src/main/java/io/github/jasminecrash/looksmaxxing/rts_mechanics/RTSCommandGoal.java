@@ -94,24 +94,17 @@ public class RTSCommandGoal extends Goal {
     @Override
     public void tick() {
         RTSCommand current = queue().peekFirst();
-        if (current == null) { return; }
+        if (current == null || !isCommandComplete(current)) { return; }
 
-        if (isCommandComplete(current)) {
-            queue().pollFirst();
-            lastCheckedPos = mob.blockPosition();
-            stuckCheckTimer = 0;
-            RTSCommand next = queue().peekFirst();
-            if (next != null) { next.start(mob); }
-        }
+        queue().pollFirst();
+        lastCheckedPos = mob.blockPosition();
+        stuckCheckTimer = 0;
+        RTSCommand next = queue().peekFirst();
+        if (next != null) { next.start(mob); }
     }
 
     @Override
     public boolean isInterruptable() {
         return false;
     }
-
-//    @Override
-//    public void stop() {
-//        queue().poll()
-//    }
 }

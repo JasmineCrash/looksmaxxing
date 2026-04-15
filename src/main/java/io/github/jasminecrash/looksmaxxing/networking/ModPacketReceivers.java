@@ -8,11 +8,13 @@ import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommand;
 import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommandType;
 import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommandTypes;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ModPacketReceivers {
 
@@ -21,7 +23,7 @@ public abstract class ModPacketReceivers {
         try {
             rawType = RTSCommandTypes.byName(typeName);
         } catch (IllegalArgumentException e) {
-            return null; // unknown type — reject silently
+            return null; // unknown type - reject silently
         }
 
         @SuppressWarnings("unchecked")
@@ -41,17 +43,23 @@ public abstract class ModPacketReceivers {
 
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.IssueCommandC2SPayload.TYPE, (payload, context) -> {
             ServerPlayer player = context.player();
-            Looksmaxxing.LOGGER.info("player {} sent a command!", player.getPlainTextName());
-            Entity entity = player.level().getEntity(payload.entityId());
-            Mob mob = (Mob) entity;
+            //Looksmaxxing.LOGGER.info("player {} sent a command!", player.getPlainTextName());
+            //Entity entity = player.level().getEntity(payload.entityIds().getFirst());
+            ServerLevel level = player.level();
+            List<Mob> mobs = new ArrayList<>();
+            payload.entityIds().forEach(id -> {
+                        mobs.add((Mob)level.getEntity(id));
+                    }
+            );
 
             RTSCommand command = decodeCommand(payload.commandTypeName(), payload.commandDataJSON());
-            if (command == null || mob == null) { return; }
-
-            ArrayDeque<RTSCommand> queue = mob.getAttachedOrCreate(ModDataAttachments.COMMAND_QUEUE);
-            if (!payload.enqueue()) { queue.clear(); }
-            queue.add(command);
-            mob.setAttached(ModDataAttachments.COMMAND_QUEUE, queue);
+            for(Mob mob : mobs) {
+                if (command == null || mob == null) { continue; }
+                ArrayDeque<RTSCommand> queue = mob.getAttachedOrCreate(ModDataAttachments.COMMAND_QUEUE);
+                if (!payload.enqueue()) { queue.clear(); }
+                queue.add(command);
+                mob.setAttached(ModDataAttachments.COMMAND_QUEUE, queue);
+            }
 
             //testing
             //BlockPos presumedTarget = (BlockPos) mob.getAttachedOrThrow(ModDataAttachments.COMMAND_QUEUE).getFirst().data(RTSCommandTypes.byName("move_to"));

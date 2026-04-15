@@ -5,6 +5,9 @@ import com.mojang.serialization.JsonOps;
 import io.github.jasminecrash.looksmaxxing.networking.ModPackets;
 import net.minecraft.world.entity.Mob;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class RTSCommand {
     private final RTSCommandType<?> type;
     private final Object data;
@@ -35,11 +38,16 @@ public final class RTSCommand {
         ((RTSCommandType<Object>) type).onStart(mob, data);
     }
 
-    public static <D> ModPackets.IssueCommandC2SPayload toPayload(int entityId, RTSCommandType<D> type, D data, boolean enqueue) {
+    public static <D> ModPackets.IssueCommandC2SPayload toPayload(List<Integer> entityIds, RTSCommandType<D> type, D data, boolean enqueue) {
         JsonElement json = type.codec()
                 .encodeStart(JsonOps.INSTANCE, data)
                 .getOrThrow(msg -> new IllegalArgumentException("Failed to encode command data: " + msg));
 
-        return new ModPackets.IssueCommandC2SPayload(entityId, RTSCommandTypes.nameOf(type), json, enqueue);
+        return new ModPackets.IssueCommandC2SPayload(entityIds, RTSCommandTypes.nameOf(type), json, enqueue);
+    }
+    public static <D> ModPackets.IssueCommandC2SPayload toPayload(int entityId, RTSCommandType<D> type, D data, boolean enqueue) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(entityId);
+        return toPayload(list, type, data, enqueue);
     }
 }

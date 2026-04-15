@@ -9,12 +9,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
+import java.util.List;
+
 import static io.github.jasminecrash.looksmaxxing.Looksmaxxing.MOD_ID;
 
 public abstract class ModPackets {
     private static final int COMMAND_DATA_MAX_JSON_CHARS = 256;
     public record IssueCommandC2SPayload(
-            int entityId,
+            List<Integer> entityIds,
             String commandTypeName,
             JsonElement commandDataJSON,
             boolean enqueue  // false = replace queue, true = append
@@ -27,7 +29,7 @@ public abstract class ModPackets {
 
         public static final StreamCodec<RegistryFriendlyByteBuf, IssueCommandC2SPayload> STREAM_CODEC =
                 StreamCodec.composite(
-                        ByteBufCodecs.INT,                                      IssueCommandC2SPayload::entityId,
+                        ByteBufCodecs.INT.apply(ByteBufCodecs.list()),          IssueCommandC2SPayload::entityIds,
                         ByteBufCodecs.STRING_UTF8,                              IssueCommandC2SPayload::commandTypeName,
                         ByteBufCodecs.lenientJson(COMMAND_DATA_MAX_JSON_CHARS), IssueCommandC2SPayload::commandDataJSON,
                         ByteBufCodecs.BOOL,                                     IssueCommandC2SPayload::enqueue,

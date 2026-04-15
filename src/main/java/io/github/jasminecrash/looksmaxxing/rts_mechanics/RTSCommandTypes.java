@@ -80,7 +80,7 @@ public abstract class RTSCommandTypes {
 
     public static RTSCommandType<?> byName(String name) {
         RTSCommandType<?> type = BY_NAME.get(name);
-        if (type == null) throw new IllegalArgumentException("Unknown RTSCommandType: " + name);
+        if (type == null) { throw new IllegalArgumentException("Unknown RTSCommandType: " + name); }
         return type;
     }
 
