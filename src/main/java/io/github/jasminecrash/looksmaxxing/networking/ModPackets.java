@@ -1,6 +1,7 @@
 package io.github.jasminecrash.looksmaxxing.networking;
 
 import com.google.gson.JsonElement;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -40,10 +41,37 @@ public abstract class ModPackets {
         public CustomPacketPayload.@NonNull Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
+    public record SetEnthrallPayload(String uuid, boolean casting) implements CustomPacketPayload {
+
+        public static final CustomPacketPayload.Type<SetEnthrallPayload> TYPE =
+                new CustomPacketPayload.Type<>(
+                        Identifier.fromNamespaceAndPath(MOD_ID, "begin_enthrall")
+                );
+
+        public static final StreamCodec<ByteBuf, SetEnthrallPayload> STREAM_CODEC =
+                //StreamCodec.of((buf, val) -> {}, buf -> new BeginEnthrallPayload());
+                StreamCodec.composite(
+                        ByteBufCodecs.STRING_UTF8, SetEnthrallPayload::uuid,
+                        ByteBufCodecs.BOOL,        SetEnthrallPayload::casting,
+                        SetEnthrallPayload::new
+                );
+
+        @Override
+        public CustomPacketPayload.@NonNull Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     public static void registerPackets() {
         PayloadTypeRegistry.serverboundPlay().register(
                 IssueCommandC2SPayload.TYPE,
                 IssueCommandC2SPayload.STREAM_CODEC
+        );
+        PayloadTypeRegistry.serverboundPlay().register(
+                SetEnthrallPayload.TYPE,
+                SetEnthrallPayload.STREAM_CODEC
+        );
+        PayloadTypeRegistry.clientboundPlay().register(
+                SetEnthrallPayload.TYPE,
+                SetEnthrallPayload.STREAM_CODEC
         );
     }
 }

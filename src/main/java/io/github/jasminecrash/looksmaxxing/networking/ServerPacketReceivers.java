@@ -7,6 +7,7 @@ import io.github.jasminecrash.looksmaxxing.ModDataAttachments;
 import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommand;
 import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommandType;
 import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommandTypes;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +17,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ModPacketReceivers {
+public abstract class ServerPacketReceivers {
 
     private static <D> RTSCommand decodeCommand(String typeName, JsonElement json) {
         RTSCommandType<?> rawType;
@@ -67,7 +68,17 @@ public abstract class ModPacketReceivers {
             //mob.goalSelector.getAvailableGoals().stream().toList().forEach(wrappedGoal -> Looksmaxxing.LOGGER.info("goalPriority: {}", wrappedGoal.getPriority()));
         });
 
-        
-    }
+        ServerPlayNetworking.registerGlobalReceiver(ModPackets.SetEnthrallPayload.TYPE, (payload, context) -> {
+            ServerPlayer caster = context.player();
+            if (caster.getAttachedOrCreate(ModDataAttachments.CASTING_ENTHRALL)) { return; }
+            caster.setAttached(ModDataAttachments.CASTING_ENTHRALL, true);
+            caster.setAttached(ModDataAttachments.ENTHRALL_CASTING_START_TIME, caster.level().getGameTime());
 
+            ModPackets.SetEnthrallPayload syncPacket = new ModPackets.SetEnthrallPayload(caster.getStringUUID(), true);
+            ServerPlayNetworking.send(caster, syncPacket);
+            PlayerLookup.tracking(caster).forEach(
+                    serverPlayer -> ServerPlayNetworking.send(serverPlayer, syncPacket)
+            ); //TODO: work out how to sync this for all players that can see the caster, even if they weren't initially tracking the caster, without blowing out someone's network card
+        });
+    }
 }

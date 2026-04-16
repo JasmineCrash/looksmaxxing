@@ -8,6 +8,7 @@ import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import io.github.jasminecrash.looksmaxxing.ModDataAttachments;
 import io.github.jasminecrash.looksmaxxing.utils.Frustum;
 import io.github.jasminecrash.looksmaxxing.utils.MathUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
@@ -69,10 +70,10 @@ public class FrustumRenderer {
         if (level == null) { return; }
 
         // Extract (write vertices)
-//        for(AbstractClientPlayer player : level.players().stream()
-//                .filter(person -> person.getAttachedOrElse(ModDataAttachments.CASTING_THE_LOOK, false)).toList()) {
-//            extractCone(context, player);
-//        }
+        for(AbstractClientPlayer player : level.players().stream()
+                .filter(person -> person.getAttachedOrCreate(ModDataAttachments.CASTING_ENTHRALL)).toList()) {
+            extractFrustum(context, player);
+        }
         //extractFrustum(context, mc.player);
 
         // Draw (upload + dispatch)

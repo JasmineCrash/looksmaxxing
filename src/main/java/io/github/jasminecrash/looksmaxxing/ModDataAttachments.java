@@ -50,10 +50,10 @@ public class ModDataAttachments {
                     .initializer(() -> "")
                     .copyOnDeath()
     );
-    public static final AttachmentType<Double> ENTHRALL_ANIMATION_PARAMETER = registerAttachment(
-            "enthrall_animation_parameter",
-            stringBuilder -> stringBuilder
-                    .initializer(() -> 0.0d)
+    public static final AttachmentType<Long> ENTHRALL_CASTING_START_TIME = registerAttachment(
+            "enthrall_casting_start_time",
+            longBuilder -> longBuilder
+                    .initializer(() -> 0L)
     ); //note: this attachment should NOT be networked for performance’s sake
 
     //RTS mechanics

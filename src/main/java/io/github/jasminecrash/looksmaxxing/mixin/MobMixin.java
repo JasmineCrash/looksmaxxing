@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Mob.class)
 public abstract class MobMixin {
 	//add a custom behavior goal to mobs that can be triggered by modifying the goal (usually it'll just do nothing)
-	@Inject(method = "<init>", at = @At("TAIL"))
+	@Inject(method = "<init>", at = @At("TAIL")) //constructor inject my beloved... <3
 	private void injectRTSGoals(CallbackInfo ci) {
 		Mob self = (Mob)(Object) this;
 		//Looksmaxxing.LOGGER.info("injectRTSGoals firing for " + self.getPlainTextName());

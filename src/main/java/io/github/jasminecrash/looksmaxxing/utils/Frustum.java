@@ -40,13 +40,13 @@ public class Frustum {
     public Vector3f[] getCorners() {
         Matrix4f inv = this.projectionMatrix.invert(new Matrix4f());
         float[][] ndcCorners = {
-                {-1, -1, -1, 1},  // near bottom-left !
+                {-1, -1, -1, 1},  // near bottom-left
                 { 1, -1, -1, 1},  // near bottom-right
-                {-1,  1, -1, 1},  // near top-left !
+                {-1,  1, -1, 1},  // near top-left
                 { 1,  1, -1, 1},  // near top-right
-                {-1, -1,  1, 1},  // far bottom-left !
+                {-1, -1,  1, 1},  // far bottom-left
                 { 1, -1,  1, 1},  // far bottom-right
-                {-1,  1,  1, 1},  // far top-left !
+                {-1,  1,  1, 1},  // far top-left
                 { 1,  1,  1, 1},  // far top-right
         };
 

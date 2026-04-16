@@ -1,6 +1,6 @@
 package io.github.jasminecrash.looksmaxxing;
 
-import io.github.jasminecrash.looksmaxxing.networking.ModPacketReceivers;
+import io.github.jasminecrash.looksmaxxing.networking.ServerPacketReceivers;
 import io.github.jasminecrash.looksmaxxing.networking.ModPackets;
 import io.github.jasminecrash.looksmaxxing.rts_mechanics.RTSCommandTypes;
 import net.fabricmc.api.ModInitializer;
@@ -22,9 +22,10 @@ public class Looksmaxxing implements ModInitializer {
 	public void onInitialize() {
 		ModDataAttachments.registerAttachments();
 		ModPackets.registerPackets();
-		ModPacketReceivers.registerServerReceivers();
+		ServerPacketReceivers.registerServerReceivers();
 		RTSCommandTypes.registerRTSCommandTypes();
 		ModCommands.registerCommands();
+		ModEvents.registerServerEvents();
 		LOGGER.info("[" + MOD_ID + "] *winks at u*");
 	}
 }
