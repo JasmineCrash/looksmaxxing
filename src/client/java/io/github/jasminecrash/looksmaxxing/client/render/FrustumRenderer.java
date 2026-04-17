@@ -54,13 +54,13 @@ public class FrustumRenderer {
     private static final Vector3f MODEL_OFFSET    = new Vector3f();
     private static final Matrix4f TEXTURE_MATRIX  = new Matrix4f();
 
-    private static FrustumRenderer instance = null;
-    public FrustumRenderer() {
-        if (instance != null) { return; }
+    private static FrustumRenderer instance = new FrustumRenderer();
+    private FrustumRenderer() {
         instance = this;
         LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(this::onLevelRender);
     }
     public static FrustumRenderer getInstance() { return instance; }
+    public static void init() {} //need something to trigger initial loading and instantiation
 
 
 

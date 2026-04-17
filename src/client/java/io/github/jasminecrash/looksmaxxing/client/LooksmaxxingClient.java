@@ -9,6 +9,6 @@ public class LooksmaxxingClient implements ClientModInitializer {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		ModKeyMappings.registerKeyMappings();
 		ClientPacketReceivers.registerClientReceivers();
-		new FrustumRenderer();
+		FrustumRenderer.init();
 	}
 }
