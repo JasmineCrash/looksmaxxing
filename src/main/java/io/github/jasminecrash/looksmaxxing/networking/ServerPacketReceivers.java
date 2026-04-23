@@ -41,31 +41,20 @@ public abstract class ServerPacketReceivers {
     }
     
     public static void registerServerReceivers() {
-
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.IssueCommandC2SPayload.TYPE, (payload, context) -> {
             ServerPlayer player = context.player();
-            //Looksmaxxing.LOGGER.info("player {} sent a command!", player.getPlainTextName());
-            //Entity entity = player.level().getEntity(payload.entityIds().getFirst());
             ServerLevel level = player.level();
             List<Mob> mobs = new ArrayList<>();
-            payload.entityIds().forEach(id -> {
-                        mobs.add((Mob)level.getEntity(id));
-                    }
-            );
+            payload.entityIds().forEach(id -> mobs.add((Mob) level.getEntity(id)));
 
             RTSCommand command = decodeCommand(payload.commandTypeName(), payload.commandDataJSON());
-            for(Mob mob : mobs) {
+            for (Mob mob : mobs) {
                 if (command == null || mob == null) { continue; }
                 ArrayDeque<RTSCommand> queue = mob.getAttachedOrCreate(ModDataAttachments.COMMAND_QUEUE);
                 if (!payload.enqueue()) { queue.clear(); }
                 queue.add(command);
                 mob.setAttached(ModDataAttachments.COMMAND_QUEUE, queue);
             }
-
-            //testing
-            //BlockPos presumedTarget = (BlockPos) mob.getAttachedOrThrow(ModDataAttachments.COMMAND_QUEUE).getFirst().data(RTSCommandTypes.byName("move_to"));
-            //Looksmaxxing.LOGGER.info("position: {}, {} commands in queue", presumedTarget.toShortString(), mob.getAttachedOrThrow(ModDataAttachments.COMMAND_QUEUE).size());
-            //mob.goalSelector.getAvailableGoals().stream().toList().forEach(wrappedGoal -> Looksmaxxing.LOGGER.info("goalPriority: {}", wrappedGoal.getPriority()));
         });
 
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.SetEnthrallPayload.TYPE, (payload, context) -> {
@@ -78,7 +67,7 @@ public abstract class ServerPacketReceivers {
             ServerPlayNetworking.send(caster, syncPacket);
             PlayerLookup.tracking(caster).forEach(
                     serverPlayer -> ServerPlayNetworking.send(serverPlayer, syncPacket)
-            ); //TODO: work out how to sync this for all players that can see the caster, even if they weren't initially tracking the caster, without blowing out someone's network card
+            );
         });
     }
 }

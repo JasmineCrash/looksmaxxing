@@ -2,6 +2,7 @@ package io.github.jasminecrash.looksmaxxing.rts_mechanics;
 
 import io.github.jasminecrash.looksmaxxing.ModDataAttachments;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -11,7 +12,7 @@ import java.util.ArrayDeque;
 import java.util.EnumSet;
 
 public class RTSCommandGoal extends Goal {
-    public Mob mob;
+    private final Mob mob;
     private BlockPos lastCheckedPos = null;
     private int stuckCheckTimer = 0;
 
@@ -20,7 +21,7 @@ public class RTSCommandGoal extends Goal {
 
     public RTSCommandGoal(Mob mob) {
         this.mob = mob;
-        this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.TARGET));
+        this.setFlags(EnumSet.noneOf(Flag.class));
     }
 
     private void clearFollowRangeBoost() {
@@ -46,7 +47,6 @@ public class RTSCommandGoal extends Goal {
                 stuckCheckTimer = 0;
                 BlockPos currentPos = mob.blockPosition();
                 if (lastCheckedPos != null && currentPos.closerThan(lastCheckedPos, STUCK_MOVEMENT_THRESHOLD)) {
-                    //Looksmaxxing.LOGGER.debug("{} is stuck, cancelling move order", mob.getPlainTextName());
                     clearFollowRangeBoost();
                     return true;
                 }
@@ -56,10 +56,14 @@ public class RTSCommandGoal extends Goal {
             return false;
         }
         else if (command.type() == RTSCommandTypes.HOLD_POSITION) {
-            return mob.getAttachedOrThrow(ModDataAttachments.COMMAND_QUEUE).size() > 1; // finishes immediately when there's more stuff queued up behind it
+            return mob.getAttachedOrCreate(ModDataAttachments.COMMAND_QUEUE).size() > 1; // finishes immediately when there's more stuff queued up behind it
         }
         else if (command.type() == RTSCommandTypes.ATTACK_TARGET) {
-            return mob.getTarget() == null || !mob.getTarget().isAlive();
+            LivingEntity target = mob.getTarget();
+            return target == null
+                    || !target.isAlive()
+                    || !mob.level().equals(target.level())
+                    || mob.distanceTo(target) > 64.0;
         }
         return true;
     }
@@ -80,14 +84,12 @@ public class RTSCommandGoal extends Goal {
 
     @Override
     public void start() {
-        //Looksmaxxing.LOGGER.info("start hit for " + mob.getPlainTextName());
         RTSCommand current = queue().peek();
-
         if (current != null) {
             current.start(mob);
             lastCheckedPos = mob.blockPosition();
             stuckCheckTimer = 0;
-            //Looksmaxxing.LOGGER.info("started new command for " + mob.getPlainTextName());
+            setFlagsForCurrentCommand();
         }
     }
 
@@ -101,6 +103,20 @@ public class RTSCommandGoal extends Goal {
         stuckCheckTimer = 0;
         RTSCommand next = queue().peekFirst();
         if (next != null) { next.start(mob); }
+        setFlagsForCurrentCommand();
+    }
+
+    private void setFlagsForCurrentCommand() {
+        RTSCommand current = queue().peekFirst();
+        if (current == null) {
+            setFlags(EnumSet.noneOf(Flag.class));
+            return;
+        }
+        if (current.type() == RTSCommandTypes.MOVE_TO) {
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        } else {
+            setFlags(EnumSet.noneOf(Flag.class));
+        }
     }
 
     @Override

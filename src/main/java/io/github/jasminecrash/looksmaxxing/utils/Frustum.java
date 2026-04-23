@@ -1,7 +1,11 @@
 package io.github.jasminecrash.looksmaxxing.utils;
 
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
+import org.jspecify.annotations.NonNull;
+
+import java.lang.Math;
 
 public class Frustum {
     private final FrustumIntersection intersectionChecker;
@@ -57,5 +61,20 @@ public class Frustum {
             inv.transformProject(c[0], c[1], c[2], corners[i]);
         }
         return corners;
+    }
+
+    public @NonNull AABB getFrustumAABB() {
+        Vector3f[] corners = this.getCorners();
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, maxZ = Double.MIN_VALUE;
+        for (Vector3f corner : corners) {
+            minX = Math.min(minX, corner.x);
+            minY = Math.min(minY, corner.y);
+            minZ = Math.min(minZ, corner.z);
+            maxX = Math.max(maxX, corner.x);
+            maxY = Math.max(maxY, corner.y);
+            maxZ = Math.max(maxZ, corner.z);
+        }
+        return new AABB(new Vec3(minX, minY, minZ), new Vec3(maxX, maxY, maxZ));
     }
 }
